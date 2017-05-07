@@ -836,6 +836,8 @@ PRINTER_MODE_CNC 2
 // ##                            Endstop configuration                                     ##
 // ##########################################################################################
 
+#define ORIG_Z_MAX_PIN          MOSI_PIN
+
 /* By default all endstops are pulled up to HIGH. You need a pull-up if you
 use a mechanical endstop connected with GND. Set value to false for no pull-up
 on this endstop.
@@ -845,7 +847,7 @@ on this endstop.
 #define ENDSTOP_PULLUP_Z_MIN false
 #define ENDSTOP_PULLUP_X_MAX true
 #define ENDSTOP_PULLUP_Y_MAX true
-#define ENDSTOP_PULLUP_Z_MAX false
+#define ENDSTOP_PULLUP_Z_MAX true
 
 //set to true to invert the logic of the endstops
 #define ENDSTOP_X_MIN_INVERTING true
@@ -853,16 +855,16 @@ on this endstop.
 #define ENDSTOP_Z_MIN_INVERTING true
 #define ENDSTOP_X_MAX_INVERTING false
 #define ENDSTOP_Y_MAX_INVERTING false
-#define ENDSTOP_Z_MAX_INVERTING false
+#define ENDSTOP_Z_MAX_INVERTING true
 
 // Set the values true where you have a hardware endstop. The Pin number is taken from pins.h.
 
 #define MIN_HARDWARE_ENDSTOP_X true
 #define MIN_HARDWARE_ENDSTOP_Y true
-#define MIN_HARDWARE_ENDSTOP_Z true
+#define MIN_HARDWARE_ENDSTOP_Z false
 #define MAX_HARDWARE_ENDSTOP_X false
 #define MAX_HARDWARE_ENDSTOP_Y false
-#define MAX_HARDWARE_ENDSTOP_Z false
+#define MAX_HARDWARE_ENDSTOP_Z true
 
 //If your axes are only moving in one direction, make sure the endstops are connected properly.
 //If your axes move in one direction ONLY when the endstops are triggered, set ENDSTOPS_INVERTING to true here
@@ -897,7 +899,7 @@ on this endstop.
 // Sets direction of endstops when homing; 1=MAX, -1=MIN
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
-#define Z_HOME_DIR -1
+#define Z_HOME_DIR 1
 
 // Delta robot radius endstop
 #define max_software_endstop_r true
@@ -910,7 +912,7 @@ on this endstop.
 //If true, axis won't move to coordinates greater than the defined lengths below.
 #define max_software_endstop_x true
 #define max_software_endstop_y true
-#define max_software_endstop_z true
+#define max_software_endstop_z false
 
 // If during homing the endstop is reached, ho many mm should the printer move back for the second try
 #define ENDSTOP_X_BACK_MOVE 5
@@ -927,7 +929,7 @@ on this endstop.
 // small amount back. This is also the case with H-belt systems.
 #define ENDSTOP_X_BACK_ON_HOME 5
 #define ENDSTOP_Y_BACK_ON_HOME 5
-#define ENDSTOP_Z_BACK_ON_HOME 0
+#define ENDSTOP_Z_BACK_ON_HOME 5
 // If you do z min homing, you might want to rise extruder a bit after homing so it does not heat
 // touching your bed.
 #define Z_UP_AFTER_HOME 1
@@ -942,7 +944,7 @@ on this endstop.
 // If EEPROM is enabled these values will be overridden with the values in the EEPROM
 #define X_MAX_LENGTH 244
 #define Y_MAX_LENGTH 210
-#define Z_MAX_LENGTH 230
+#define Z_MAX_LENGTH 210
 // Coordinates for the minimum axis. Can also be negative if you want to have the bed start at 0 and the printer can go to the left side
 // of the bed. Maximum coordinate is given by adding the above X_MAX_LENGTH values.
 #define X_MIN_POS -39
@@ -1104,7 +1106,7 @@ Mega. Used only for nonlinear systems like delta or tuga. */
  * first a z home to get some reference, then raise to ZHOME_HEAT_HEIGHT do xy homing and then after
  * heating to minimum ZHOME_MIN_TEMPERATURE will z home again for correct height.   
  * */
-#define HOMING_ORDER HOME_ORDER_ZXYTZ
+#define HOMING_ORDER HOME_ORDER_XYZ
 /*
   Raise Z befor ehoming z axis
   0 = no
@@ -1114,7 +1116,7 @@ Mega. Used only for nonlinear systems like delta or tuga. */
   at a minimum height for some endstop types, so raising it before will help
   to make sure this is guaranteed. 
 */
-#define ZHOME_PRE_RAISE 2
+#define ZHOME_PRE_RAISE 0
 // Distance in mm to raise if required
 #define ZHOME_PRE_RAISE_DISTANCE 10
 
