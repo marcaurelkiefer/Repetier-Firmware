@@ -1089,13 +1089,13 @@ Mega. Used only for nonlinear systems like delta or tuga. */
     The axis order in all axis related arrays is X, Y, Z
      Overridden if EEPROM activated.
     */
-#define MAX_FEEDRATE_X 200
-#define MAX_FEEDRATE_Y 200
+#define MAX_FEEDRATE_X 400
+#define MAX_FEEDRATE_Y 400
 #define MAX_FEEDRATE_Z 20
 
 /** Home position speed in mm/s. Overridden if EEPROM activated. */
-#define HOMING_FEEDRATE_X 80
-#define HOMING_FEEDRATE_Y 80
+#define HOMING_FEEDRATE_X 100
+#define HOMING_FEEDRATE_Y 100
 #define HOMING_FEEDRATE_Z 10
 
 /** Set order of axis homing. Use HOME_ORDER_XYZ and replace XYZ with your order. 
