@@ -312,7 +312,7 @@ controlled by settings in extruder 0 definition. */
 - 3 = Dead-time control. PID_P becomes dead-time in seconds.
  Overridden if EEPROM activated.
 */
-#define EXT0_HEAT_MANAGER 1
+#define EXT0_HEAT_MANAGER 3
 /** Wait x seconds, after reaching target temperature. Only used for M109.  Overridden if EEPROM activated. */
 #define EXT0_WATCHPERIOD 1
 
@@ -336,7 +336,7 @@ A good start is 30 lower then the optimal value. You need to leave room for cool
 */
 #define EXT0_PID_INTEGRAL_DRIVE_MIN 40
 /** P-gain.  Overridden if EEPROM activated. */
-#define EXT0_PID_PGAIN_OR_DEAD_TIME   7
+#define EXT0_PID_PGAIN_OR_DEAD_TIME   8
 /** I-gain. Overridden if EEPROM activated.
 */
 #define EXT0_PID_I   2
@@ -732,7 +732,7 @@ Heat manager for heated bed:
 2 = Bang Bang, limited check every HEATED_BED_SET_INTERVAL. Use this with relay-driven beds to save life time
 3 = dead time control
 */
-#define HEATED_BED_HEAT_MANAGER 1
+#define HEATED_BED_HEAT_MANAGER 3
 /** \brief The maximum value, I-gain can contribute to the output.
 The precise values may differ for different nozzle/resistor combination.
  Overridden if EEPROM activated.
@@ -747,7 +747,7 @@ A good start is 30 lower then the optimal value. You need to leave room for cool
 */
 #define HEATED_BED_PID_INTEGRAL_DRIVE_MIN 80
 /** P-gain.  Overridden if EEPROM activated. */
-#define HEATED_BED_PID_PGAIN_OR_DEAD_TIME   196
+#define HEATED_BED_PID_PGAIN_OR_DEAD_TIME   12
 /** I-gain  Overridden if EEPROM activated.*/
 #define HEATED_BED_PID_IGAIN   33.02
 /** Dgain.  Overridden if EEPROM activated.*/
