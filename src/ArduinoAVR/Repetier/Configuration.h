@@ -947,7 +947,7 @@ on this endstop.
 #define Z_MAX_LENGTH 210
 // Coordinates for the minimum axis. Can also be negative if you want to have the bed start at 0 and the printer can go to the left side
 // of the bed. Maximum coordinate is given by adding the above X_MAX_LENGTH values.
-#define X_MIN_POS -39
+#define X_MIN_POS -29
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
 
