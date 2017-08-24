@@ -1114,7 +1114,7 @@ Mega. Used only for nonlinear systems like delta or tuga. */
   at a minimum height for some endstop types, so raising it before will help
   to make sure this is guaranteed. 
 */
-#define ZHOME_PRE_RAISE 2
+#define ZHOME_PRE_RAISE 1
 // Distance in mm to raise if required
 #define ZHOME_PRE_RAISE_DISTANCE 10
 
@@ -1127,15 +1127,15 @@ Mega. Used only for nonlinear systems like delta or tuga. */
 // Used for homing order HOME_ORDER_ZXYTZ
 #define ZHOME_MIN_TEMPERATURE 0
 // needs to heat all extruders (1) or only current extruder (0)
-#define ZHOME_HEAT_ALL 1 
+#define ZHOME_HEAT_ALL 0 
 // Z-height for heating extruder during homing
 #define ZHOME_HEAT_HEIGHT 20
 // If your bed might bend while probing, because your sensor is the extruder tip
 // you can define a predefined x,y position so beding is always the same and
 // can be compensated. Set coordinate to 999999 to ignore positions and just
 // use the position you are at.
-#define ZHOME_X_POS 130
-#define ZHOME_Y_POS 130
+#define ZHOME_X_POS 999999
+#define ZHOME_Y_POS 999999
 
 /* If you have a backlash in both z-directions, you can use this. For most printer, the bed will be pushed down by it's
 own weight, so this is nearly never needed. */
