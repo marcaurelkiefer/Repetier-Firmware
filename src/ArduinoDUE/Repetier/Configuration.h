@@ -774,6 +774,8 @@ automatically disabled.
 #define LASER_PIN -1    // set to pin enabling laser
 #define LASER_ON_HIGH 1 // Set 0 if low signal enables laser
 #define LASER_WARMUP_TIME 0// wait x milliseconds to start material burning before move
+#define LASER_PWM_MAX 255 //255 8-bit PWM 4095 for 12Bit PWM
+#define LASER_WATT 1.6  // Laser diode power
 
 // ##########################################################################################
 // ##                              CNC configuration                                       ##
@@ -793,6 +795,9 @@ It also can add a delay to wait for spindle to run on full speed.
 #define CNC_ENABLE_WITH 1 // Set 0 if low enables spindle
 #define CNC_DIRECTION_PIN -1 // Set to pin if direction control is possible
 #define CNC_DIRECTION_CW 1 // Set signal required for clockwise rotation
+#define CNC_PWM_MAX 255  //255 8-bit PWM 4095 for 12Bit PWM
+#define CNC_RPM_MAX 25000   //max spindle RPM
+#define CNC_SAFE_Z 150  // Safe Z height so tool is outside object, used for pause
 
 
 /* Select the default mode when the printer gets enables. Possible values are
@@ -1209,7 +1214,7 @@ Overridden if EEPROM activated.
 
 /** \brief Number of moves we can cache in advance.
 
-This number of moves can be cached in advance. If you wan't to cache more, increase this. Especially on
+This number of moves can be cached in advance. If you want to cache more, increase this. Especially on
 many very short moves the cache may go empty. The minimum value is 5.
 */
 #define PRINTLINE_CACHE_SIZE 32
@@ -1266,7 +1271,7 @@ to activate the quadratic term. Only adds lots of computations and storage usage
 
 /** \brief Communication speed.
 
-- 250000 : Fastes with errorrate of 0% with 16 or 32 MHz - update wiring_serial.c in your board files. See boards/readme.txt
+- 250000 : Fastest with error rate of 0% with 16 or 32 MHz - update wiring_serial.c in your board files. See boards/readme.txt
 - 115200 : Fast, but may produce communication errors on quite regular basis, Error rate -3,5%
 - 76800 : Best setting for Arduino with 16 MHz, Error rate 0,2% page 198 AVR1284 Manual. Result: Faster communication then 115200
 - 57600 : Should produce nearly no errors, on my gen 6 it's faster than 115200 because there are no errors slowing down the connection
@@ -1299,7 +1304,7 @@ boards you might need to make it inverting.
 #define ACK_WITH_LINENUMBER 1       
 /** Communication errors can swallow part of the ok, which tells the host software to send
 the next command. Not receiving it will cause your printer to stop. Sending this string every
-second, if our queue is empty should prevent this. Comment it, if you don't wan't this feature. */
+second, if our queue is empty should prevent this. Comment it, if you don't want this feature. */
 #define WAITING_IDENTIFIER "wait"
 
 /** \brief Sets time for echo debug
@@ -1429,6 +1434,8 @@ to recalibrate z.
 #define FEATURE_Z_PROBE 0
 // Especially if you have more then 1 extruder acting as z probe this is important!
 #define EXTRUDER_IS_Z_PROBE 0
+// Disable all heaters before probing - required for inductive sensors
+#define Z_PROBE_DISABLE_HEATERS 0
 #define Z_PROBE_PIN -1  // 63
 #define Z_PROBE_PULLUP 1
 #define Z_PROBE_ON_HIGH 1
@@ -1441,6 +1448,8 @@ to recalibrate z.
 #define Z_PROBE_WAIT_BEFORE_TEST 0
 /** Speed of z-axis in mm/s when probing */
 #define Z_PROBE_SPEED 2
+/** Delay before going down. Needed for piezo endstops to reload safely. */
+#define Z_PROBE_DELAY 0
 #define Z_PROBE_XY_SPEED 150
 #define Z_PROBE_SWITCHING_DISTANCE 1.5 // Distance to safely switch off probe after it was activated
 #define Z_PROBE_REPETITIONS 5 // Repetitions for probing at one point. 
@@ -1527,6 +1536,8 @@ motorized bed leveling */
 
 #define DISTORTION_CORRECTION         0
 #define DISTORTION_CORRECTION_POINTS  5
+/** Max. distortion value to enter. Used to prevent dangerous errors with big values. */
+#define DISTORTION_LIMIT_TO 2
 /* For delta printers you simply define the measured radius around origin */
 #define DISTORTION_CORRECTION_R       80
 /* For all others you define the correction rectangle by setting the min/max coordinates. Make sure the the probe can reach all points! */
@@ -1558,7 +1569,7 @@ best bonding with surface. */
 
 /* If your printer is not exactly square but is more like a parallelogram, you can
 use this to compensate the effect of printing squares like parallelograms. Set the
-parameter to then tangens of the deviation from 90° when you print a square object.
+parameter to then tangents of the deviation from 90° when you print a square object.
 E.g. if you angle is 91° enter tan(1) = 0.017. If error doubles you have the wrong sign.
 Always hard to say since the other angle is 89° in this case!
 */
@@ -1577,7 +1588,7 @@ Always hard to say since the other angle is 89° in this case!
 /* If you have a threaded rod, you want a higher multiplicator to see an effect. Limit value to 50 or you get easily overflows.*/
 #define BABYSTEP_MULTIPLICATOR 1
 
-/* Define a pin to tuen light on/off */
+/* Define a pin to turn light on/off */
 #define CASE_LIGHTS_PIN -1
 #define CASE_LIGHT_DEFAULT_ON 1
 

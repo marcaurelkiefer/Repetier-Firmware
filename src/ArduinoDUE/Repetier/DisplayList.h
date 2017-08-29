@@ -234,7 +234,7 @@ void uiCheckSlowKeys(uint16_t &action) {}
 #define UI_VOLTAGE_LEVEL 1 // Set 1=5 o 0=3.3 V
 #endif
 
-#elif MOTHERBOARD == CONTROLLER_FELIX_DUE
+#elif MOTHERBOARD == 405 // Felix Pro 1
 
 #undef BEEPER_PIN
 #define BEEPER_PIN             -1
@@ -244,6 +244,18 @@ void uiCheckSlowKeys(uint16_t &action) {}
 #define UI_ENCODER_A           52
 #define UI_ENCODER_B           50
 #define UI_ENCODER_CLICK       48
+#define UI_RESET_PIN           -1
+
+#elif MOTHERBOARD == 101 // Felix Pro 1
+
+#undef BEEPER_PIN
+#define BEEPER_PIN             -1
+#define UI_DISPLAY_RS_PIN      16
+#define UI_DISPLAY_ENABLE_PIN  17
+#define UI_DISPLAY_D4_PIN      23
+#define UI_ENCODER_A           35
+#define UI_ENCODER_B           37
+#define UI_ENCODER_CLICK       31
 #define UI_RESET_PIN           -1
 
 #elif ( MOTHERBOARD == 183 ) || ( MOTHERBOARD == 184 ) // MJRice Pica
