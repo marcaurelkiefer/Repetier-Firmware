@@ -1529,7 +1529,7 @@ motorized bed leveling */
    This feature requires a working z-probe and you should have z-endstop at the top not at the bottom.
    The same 3 points are used for the G29 command.
 */
-#define FEATURE_AUTOLEVEL 1
+#define FEATURE_AUTOLEVEL 0
 #define Z_PROBE_X1 15
 #define Z_PROBE_Y1 15
 #define Z_PROBE_X2 165
