@@ -1613,7 +1613,7 @@ Always hard to say since the other angle is 89° in this case!
 /* Babystepping allows to change z height during print without changing official z height */
 #define FEATURE_BABYSTEPPING 1
 /* If you have a threaded rod, you want a higher multiplicator to see an effect. Limit value to 50 or you get easily overflows.*/
-#define BABYSTEP_MULTIPLICATOR 1
+#define BABYSTEP_MULTIPLICATOR 10
 
 /* Define a pin to turn light on/off */
 #define CASE_LIGHTS_PIN -1
