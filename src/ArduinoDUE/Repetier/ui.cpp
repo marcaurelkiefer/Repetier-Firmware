@@ -1391,6 +1391,7 @@ void UIDisplay::parse(const char *txt, bool ram) {
                 //char c2 = (ram ? *(txt++) : pgm_read_byte(txt++));
                 txt++; // just skip c sign
                 ivalue = 0;
+				c2 = 'c';
             } else ivalue = UI_TEMP_PRECISION;
 
             if(c2 == 'r') { // Extruder relative mode
@@ -3664,7 +3665,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
                 Printer::moveToReal(FILAMENTCHANGE_X_POS, FILAMENTCHANGE_Y_POS, newZ, 0, Printer::homingFeedrate[X_AXIS]);
             }
             //Extruder::current->retractDistance(FILAMENTCHANGE_LONGRETRACT);
-            Extruder::pauseExtruders();
+            Extruder::pauseExtruders(false);
             Commands::waitUntilEndOfAllMoves();
 #if FILAMENTCHANGE_REHOME
             Printer::disableXStepper();

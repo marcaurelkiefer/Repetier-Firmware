@@ -1321,6 +1321,11 @@ If you use an ATX power supply you need the power pin to work non inverting. For
 boards you might need to make it inverting.
 */
 #define POWER_INVERTING 0
+
+/** Automatically enable power when temperatures or moves/homing is used. Set only to 1 if
+ *you have a power unit controlled by PS_ON_PIN! */
+#define AUTOMATIC_POWERUP 0
+
 /** What shall the printer do, when it receives an M112 emergency stop signal?
  0 = Disable heaters/motors, wait forever until someone presses reset.
  1 = restart by resetting the AVR controller. The USB connection will not reset if managed by a different chip!
@@ -1431,6 +1436,10 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 /** Some fans won't start for low values, but would run if started with higher power at the beginning.
 This defines the full power duration before returning to set value. Time is in milliseconds */
 #define FAN_KICKSTART_TIME  200
+/** Defines the max. fan speed for M106 controlled fans. Normally 255 to use full range, but for
+ 12V fans on 24V this might help preventing a defect. For all other fans there is a explicit maximum PWM value
+ you can set, so this is not used for other fans! */
+#define MAX_FAN_PWM 255
 
 /* A watchdog resets the printer, if a signal is not send within predefined time limits. That way we can be sure that the board
 is always running and is not hung up for some unknown reason. */

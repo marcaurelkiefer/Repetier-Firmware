@@ -18,10 +18,13 @@ void Felix100MS() {
     
     // Test if bed is back
     if((bed->flags & TEMPERATURE_CONTROLLER_FLAG_SENSDEFECT) == TEMPERATURE_CONTROLLER_FLAG_SENSDEFECT && bed->currentTemperatureC > 0) {
+      GCode::resetFatalError();
       bed->flags &= ~TEMPERATURE_CONTROLLER_FLAG_SENSDEFECT;
-      Printer::debugReset(8);
       Printer::unsetAnyTempsensorDefect();
       UI_RESET_MENU
+#ifndef TEC4
+      Printer::unsetHomedAll();
+#endif
     }
   }
   #endif
@@ -56,7 +59,13 @@ void Felix500MS() {
   }
   #endif
   if(changeFilWaitTarget) {
-    if(Extruder::current->tempControl.currentTemperatureC >= Extruder::current->tempControl.targetTemperatureC - 2) {
+    if(Extruder::current->tempControl.currentTemperatureC >= Extruder::current->tempControl.targetTemperatureC 
+#ifndef TEC4
+    - 15
+#else
+    - 2
+#endif
+    ) {
       changeFilWaitTarget = false;
       uid.executeAction(UI_ACTION_WIZARD_FILAMENTCHANGE, true);   
     }
@@ -83,7 +92,9 @@ void cstmCooldown() {
 } 
 bool cstmIsHeating() {
   return extruder[0].tempControl.targetTemperatureC > 0 ||
+#if NUM_EXTRUDER > 1  
     extruder[1].tempControl.targetTemperatureC > 0 ||
+#endif    
     heatedBedController.targetTemperatureC > 0; 
 }
 void setPreheatTemps(int16_t extr,int16_t bed,bool all,bool showMenu = true) {
@@ -153,7 +164,7 @@ void halfautomaticLevel2() {
   Printer::wizardStack[0].f = z2; 
   Printer::wizardStack[1].f = z1; 
   uid.popMenu(false);
-  if(fabs(z1) <= 10 && fabs(z2) <= 10) {
+  if(fabs(z1) <= 15 && fabs(z2) <= 15) {
     Printer::finishProbing();
     uid.pushMenu(&cui_calib_zprobe_dist, true);
     Printer::measureDistortion();
@@ -172,8 +183,31 @@ void halfautomaticLevel3() {
 void halfautomaticLevel1() {
   uid.pushMenu(&cui_msg_measuring,true);
   Printer::distortion.resetCorrection();
-  Printer::distortion.disable(false); 
+  Printer::distortion.disable(false);
+#ifndef TEC4
+  Extruder::setTemperatureForExtruder(170,0,false);
+  if(NUM_EXTRUDER > 1){
+    Extruder::setTemperatureForExtruder(170,1,false);
+  }
+#else
+  Extruder::setTemperatureForExtruder(120,0,false);
+  if(NUM_EXTRUDER > 1){
+    Extruder::setTemperatureForExtruder(120,1,false);
+  }
+#endif
+  Extruder::setHeatedBedTemperature(55,true);
+  EVENT_WAITING_HEATER(-1);
+  tempController[HEATED_BED_INDEX]->waitForTargetTemperature();
+  EVENT_HEATING_FINISHED(-1);
+  Extruder::setTemperatureForExtruder(0,0,false);
+  if(NUM_EXTRUDER > 1){
+    Extruder::setTemperatureForExtruder(0,1,false);
+  }
   Printer::homeAxis(true, true, true);
+  Extruder::setTemperatureForExtruder(0,0,false);
+  if(NUM_EXTRUDER > 1){
+    Extruder::setTemperatureForExtruder(0,1,false);
+  }
   Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, HALF_Z, IGNORE_COORDINATE, Printer::homingFeedrate[Z_AXIS]);
   Printer::moveToReal(HALF_FIX_X, HALF_FIX_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, EXTRUDER_SWITCH_XY_SPEED);
   Printer::startProbing(true);
@@ -208,15 +242,38 @@ void cZPHeight1() {
     distEnabled = Printer::distortion.isEnabled();
     Printer::distortion.disable(false); // if level has changed, distortion is also invalid
 #endif
-  Extruder::disableAllHeater(); 
+  // Extruder::disableAllHeater();
+#ifndef TEC4
+  Extruder::setTemperatureForExtruder(170,0,false);
+  if(NUM_EXTRUDER > 1){
+    Extruder::setTemperatureForExtruder(170,1,false);
+  }
+#else
+  Extruder::setTemperatureForExtruder(120,0,false);
+  if(NUM_EXTRUDER > 1){
+    Extruder::setTemperatureForExtruder(120,1,false);
+  }
+#endif
+  Extruder::setHeatedBedTemperature(55,true);
+  EVENT_WAITING_HEATER(-1);
+  tempController[HEATED_BED_INDEX]->waitForTargetTemperature();
+  EVENT_HEATING_FINISHED(-1);
+  Extruder::setTemperatureForExtruder(0,0,false);
+  if(NUM_EXTRUDER > 1){
+    Extruder::setTemperatureForExtruder(0,1,false);
+  }
+   
   Printer::homeAxis(true, true, true);
   Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, EEPROM::zProbeBedDistance(), IGNORE_COORDINATE, Printer::homingFeedrate[Z_AXIS]);
-  Printer::moveToReal(HALF_FIX_X, HALF_FIX_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, EXTRUDER_SWITCH_XY_SPEED);
+//  Printer::moveToReal(HALF_FIX_X, HALF_FIX_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, EXTRUDER_SWITCH_XY_SPEED);
+  //Printer::moveToReal(ZHOME_X_POS, ZHOME_Y_POS, IGNORE_COORDINATE, IGNORE_COORDINATE, EXTRUDER_SWITCH_XY_SPEED); //added by FELIXprinters
+  Printer::moveToReal(100, 100, IGNORE_COORDINATE, IGNORE_COORDINATE, EXTRUDER_SWITCH_XY_SPEED); //added by FELIXprinters
   //refZ = Printer::runZProbe(true, true) - EEPROM::zProbeBedDistance() - Printer::zBedOffset;
   refZ = 0;
   // Com::printF(PSTR(" cur:"),Printer::currentPosition[Z_AXIS],3);Com::printF(PSTR(" refZ:"), refZ, 3);Com::printFLN(PSTR(" atZ:"), EEPROM::zProbeBedDistance(), 3);
   Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, ZPROBE_REF_HEIGHT - refZ, IGNORE_COORDINATE, Printer::homingFeedrate[Z_AXIS]);
   Printer::updateCurrentPosition(true);
+  Extruder::disableAllHeater(); //added by FELIX, ensure all heaters are off for correct reading of induction sensor
   uid.popMenu(false);
   uid.pushMenu(&cui_calib_zprobe_info, true);
 }
@@ -245,6 +302,7 @@ void cZPHeight2() {
   if(distEnabled)
     Printer::distortion.enable(false);
 #endif
+Extruder::disableAllHeater(); //commented by FELIX
 
 }
 #endif
@@ -333,12 +391,18 @@ void cExecute(int action,bool allowMoves) {
     {
       int32_t xcor = static_cast<int32_t>((Printer::axisStepsPerMM[X_AXIS] * (Printer::wizardStack[0].l - 5)) / 10);
       int32_t ycor = static_cast<int32_t>((Printer::axisStepsPerMM[Y_AXIS] * (Printer::wizardStack[1].l - 5)) / 10);
+      Com::printF(PSTR(" xOffset_before:"),extruder[1].xOffset,3);
       #ifdef TEC4
       extruder[1].xOffset += xcor;
       #else
       extruder[1].xOffset -= xcor;
       #endif
+      Com::printF(PSTR(" xCor:"),xcor,3);
+      Com::printF(PSTR(" xOffset_after:"),extruder[1].xOffset,3);
+      Com::printF(PSTR(" yOffset_before:"),extruder[1].yOffset,3);
       extruder[1].yOffset += ycor;
+      Com::printF(PSTR(" yCor:"),ycor,3);
+      Com::printFLN(PSTR(" yOffset_after:"),extruder[1].yOffset,3);
       if(xcor != 0 || ycor != 0)
         EEPROM::storeDataIntoEEPROM(false);
       uid.popMenu(true);  
@@ -365,7 +429,9 @@ void cExecute(int action,bool allowMoves) {
     } else {
       Extruder::setHeatedBedTemperature(heatedBedController.preheatTemperature);
       Extruder::setTemperatureForExtruder(extruder[0].tempControl.preheatTemperature,0,false);
+#if NUM_EXTRUDER > 1      
       Extruder::setTemperatureForExtruder(0,1,false);
+#endif      
     }
     break;    
   case UI_ACTION_PRECOOL2:
@@ -374,7 +440,9 @@ void cExecute(int action,bool allowMoves) {
     } else {
       Extruder::setHeatedBedTemperature(heatedBedController.preheatTemperature);
       Extruder::setTemperatureForExtruder(extruder[0].tempControl.preheatTemperature,0,false);
+#if NUM_EXTRUDER > 0      
       Extruder::setTemperatureForExtruder(extruder[1].tempControl.preheatTemperature,1,false);
+#endif      
     }
     break;
   case UI_ACTION_REMOVEBED: {
@@ -437,7 +505,17 @@ void cExecute(int action,bool allowMoves) {
     uid.pushMenu(&ui_menu_ch2,true);
     break;
   case UI_ACTION_FC_SELECT2:
+#ifndef TEC4
+    if(!Printer::isHomedAll()){ //added by FELIX
+      // Printer::homeAxis(true,true,false);
+      Extruder::selectExtruderById(1);
+    }
+    else{
+      Extruder::selectExtruderById(1);
+    }
+#else      
     Extruder::selectExtruderById(1);
+#endif    
     uid.popMenu(false);
     uid.pushMenu(&ui_menu_ch2,true);
     break;
@@ -2178,9 +2256,8 @@ FSTRINGVALUE(calibrationGCode,
 "T0\n"
 "M117 Heating Extruder\n"
 "M109 S190\n"
-"G92 E0 \n"
 "G92 E0\n"
-"G92 E0\n"
+"G1 E1 F900\n"
 "G1 X209.1 Y112.5 Z0.45 E0 F9000\n"
 "G1 X209.1 Y112.5 Z0.25 E0 F210\n"
 "G1 E1 F900\n"

@@ -425,7 +425,7 @@ void Extruder::unpauseExtruders(bool wait) {
 #endif
 #if HAVE_HEATED_BED
     bool waitBed = false;
-    if(heatedBedController.targetTemperatureC) {
+    if(heatedBedController.targetTemperatureC < 0) {
         heatedBedController.targetTemperatureC = -heatedBedController.targetTemperatureC;
         waitBed = true;
     }
@@ -840,7 +840,7 @@ void Extruder::selectExtruderById(uint8_t extruderId) {
     }
 #endif
     Printer::feedrate = oldfeedrate;
-    Printer::updateCurrentPosition(false);
+    Printer::updateCurrentPosition(true);
 #if USE_ADVANCE
     HAL::resetExtruderDirection();
 #endif // USE_ADVANCE
@@ -2331,6 +2331,7 @@ void TemperatureController::updateCurrentTemperature() {
 }
 
 void TemperatureController::setTargetTemperature(float target) {
+	ENSURE_POWER
     targetTemperatureC = target;
     stopDecouple();
 }
